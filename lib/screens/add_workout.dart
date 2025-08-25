@@ -139,7 +139,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
               const SizedBox(height: 24),
               OutlinedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
+                  backgroundColor: WidgetStateProperty.all(
                     Color.fromARGB(255, 36, 36, 36),
                   ),
                 ),
