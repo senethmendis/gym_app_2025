@@ -5,6 +5,7 @@ import 'package:gym_app/screens/meal_plan_detail_screen.dart';
 import '../utils/database_helper.dart';
 import 'add_workout.dart';
 import 'workout_detail.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -86,38 +87,114 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: TabBarView(
           children: [
-            // Workouts Tab
+            /// -------------------- Workouts Tab --------------------
             Column(
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
+
+                /// Hero Images Carousel
                 CarouselSlider(
-                  options: CarouselOptions(height: 200.0),
+                  options: CarouselOptions(
+                    height: 150.0,
+                    autoPlay: true,
+                    autoPlayInterval: Duration(seconds: 2),
+                  ),
                   items: heroImages.map((i) {
                     return Builder(
                       builder: (BuildContext context) {
                         return Container(
                           width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(horizontal: 5.0),
-                          padding: EdgeInsets.all(10),
+                          margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 218, 255, 7),
+                            color: const Color.fromARGB(255, 218, 255, 7),
                             borderRadius: BorderRadius.circular(10),
                             image: DecorationImage(
                               image: NetworkImage(i.url),
                               fit: BoxFit.cover,
                             ),
                           ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
 
-                          child: Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Chip(
-                              backgroundColor: Color.fromARGB(255, 218, 255, 7),
-                              label: Text(
-                                '${i.title}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                const SizedBox(height: 20),
+
+                /// Exercise Tutorials Section
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Exercise Tutorials',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                CarouselSlider(
+                  options: CarouselOptions(height: 100.0),
+                  items: List.generate(exersiceTutorials.length, (index) {
+                    final i = exersiceTutorials[index];
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return InkWell(
+                          onTap: () async {
+                            if (i.video != null && i.video!.isNotEmpty) {
+                              await launchUrlString(i.video!);
+                            }
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 218, 255, 7),
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                colorFilter: ColorFilter.mode(
+                                  Colors.black.withOpacity(
+                                    0.5,
+                                  ), // or any color you want
+                                  BlendMode.darken,
                                 ),
+                                opacity: 0.5,
+                                image: NetworkImage(i.url),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            child: Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (i.description != null &&
+                                      i.description!.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4.0),
+                                      child: Text(
+                                        i.title ?? '',
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color.fromARGB(
+                                            221,
+                                            255,
+                                            255,
+                                            255,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                           ),
@@ -126,56 +203,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }).toList(),
                 ),
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            'Exersice Tutorials',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20),
-                CarouselSlider(
-                  options: CarouselOptions(height: 100.0),
-                  items: exersiceTutorials.map((i) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(horizontal: 5.0),
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 218, 255, 7),
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                              image: NetworkImage(i.url),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
 
-                          child: Column(children: []),
-                        );
-                      },
-                    );
-                  }).toList(),
-                ),
+                /// Workouts List
                 Padding(
-                  padding: const EdgeInsets.only(
-                    left: 8.0,
-                    right: 8.0,
-                    bottom: 4.0,
-                    top: 16.0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                    vertical: 16.0,
                   ),
                   child: Row(
                     children: [
@@ -194,6 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+
                 Expanded(
                   child: FutureBuilder<List<Map<String, dynamic>>>(
                     future: _workoutsFuture,
@@ -347,10 +381,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
 
-            // Meal Plans Tab
+            /// -------------------- Meal Plans Tab --------------------
             Column(
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
+
+                /// Meal Hero Carousel
                 CarouselSlider(
                   options: CarouselOptions(height: 200.0),
                   items: healthyMeals.map((i) {
@@ -358,24 +394,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (BuildContext context) {
                         return Container(
                           width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(horizontal: 5.0),
-                          padding: EdgeInsets.all(10),
+                          margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 218, 255, 7),
+                            color: const Color.fromARGB(255, 218, 255, 7),
                             borderRadius: BorderRadius.circular(10),
                             image: DecorationImage(
                               image: NetworkImage(i.url),
                               fit: BoxFit.cover,
                             ),
                           ),
-
                           child: Align(
                             alignment: Alignment.bottomLeft,
                             child: Chip(
-                              backgroundColor: Color.fromARGB(255, 218, 255, 7),
+                              backgroundColor: const Color.fromARGB(
+                                255,
+                                218,
+                                255,
+                                7,
+                              ),
                               label: Text(
-                                '${i.title}',
-                                style: TextStyle(
+                                i.title ?? "",
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -387,12 +427,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }).toList(),
                 ),
+
+                /// Meal Plans List
                 Padding(
-                  padding: const EdgeInsets.only(
-                    left: 8.0,
-                    right: 8.0,
-                    bottom: 4.0,
-                    top: 16.0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                    vertical: 16.0,
                   ),
                   child: Row(
                     children: [
@@ -411,6 +451,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+
                 Expanded(
                   child: FutureBuilder<List<Map<String, dynamic>>>(
                     future: _mealPlansFuture,
