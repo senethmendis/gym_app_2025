@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<List<Map<String, dynamic>>>? _workoutsFuture;
   Future<List<Map<String, dynamic>>>? _mealPlansFuture;
   int _workoutReloadKey = 0;
-  int _selectedTabIndex = 0;
+  final int _selectedTabIndex = 0;
 
   @override
   void initState() {
@@ -160,7 +160,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               borderRadius: BorderRadius.circular(10),
                               image: DecorationImage(
                                 colorFilter: ColorFilter.mode(
-                                  Colors.black.withOpacity(
+                                  Color.fromRGBO(
+                                    0,
+                                    0,
+                                    0,
                                     0.5,
                                   ), // or any color you want
                                   BlendMode.darken,
