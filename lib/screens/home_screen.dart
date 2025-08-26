@@ -110,10 +110,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: const Color.fromARGB(255, 218, 255, 7),
                             borderRadius: BorderRadius.circular(10),
                             image: DecorationImage(
-                              image: NetworkImage(i.url),
+                              image: AssetImage(i.url),
                               fit: BoxFit.cover,
                             ),
                           ),
+                          child: Image(image: AssetImage(i.url)),
                         );
                       },
                     );
@@ -156,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             margin: const EdgeInsets.symmetric(horizontal: 5.0),
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 218, 255, 7),
+                              color: const Color.fromARGB(255, 26, 26, 26),
                               borderRadius: BorderRadius.circular(10),
                               image: DecorationImage(
                                 colorFilter: ColorFilter.mode(
@@ -169,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   BlendMode.darken,
                                 ),
                                 opacity: 0.5,
-                                image: NetworkImage(i.url),
+                                image: AssetImage(i.url),
                                 fit: BoxFit.cover,
                               ),
                             ),
