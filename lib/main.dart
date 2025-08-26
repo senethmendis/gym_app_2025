@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app/screens/splash_screen.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
+import 'package:gym_app/screens/splash_screen.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {

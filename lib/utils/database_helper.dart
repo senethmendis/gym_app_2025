@@ -17,7 +17,9 @@ class DatabaseHelper {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    final db = await openDatabase(path, version: 1, onCreate: _createDB);
+    await addRepsSetsColumnsIfNeeded(db); // Ensure columns exist after DB open
+    return db;
   }
 
   Future _createDB(Database db, int version) async {
@@ -33,9 +35,48 @@ class DatabaseHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         workout_id INTEGER NOT NULL,
         name TEXT NOT NULL,
+        reps TEXT,
+        sets TEXT,
         FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
       )
     ''');
+
+    // New: Create meal_plans table
+    await db.execute('''
+      CREATE TABLE meal_plans (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        day TEXT NOT NULL,
+        morning_title TEXT,
+        morning_protein REAL,
+        morning_carbs REAL,
+        morning_fat REAL,
+        morning_description TEXT,
+        lunch_title TEXT,
+        lunch_protein REAL,
+        lunch_carbs REAL,
+        lunch_fat REAL,
+        lunch_description TEXT,
+        dinner_title TEXT,
+        dinner_protein REAL,
+        dinner_carbs REAL,
+        dinner_fat REAL,
+        dinner_description TEXT
+      )
+    ''');
+  }
+
+  // Add reps and sets columns if they don't exist
+  Future<void> addRepsSetsColumnsIfNeeded(Database db) async {
+    try {
+      await db.execute('ALTER TABLE exercises ADD COLUMN reps TEXT;');
+    } catch (e) {
+      // Ignore error if column already exists
+    }
+    try {
+      await db.execute('ALTER TABLE exercises ADD COLUMN sets TEXT;');
+    } catch (e) {
+      // Ignore error if column already exists
+    }
   }
 
   Future<int> insertWorkout(Map<String, dynamic> row) async {
@@ -57,6 +98,28 @@ class DatabaseHelper {
   Future<int> deleteWorkout(int id) async {
     final db = await instance.database;
     return await db.delete('workouts', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // Add CRUD methods for meal plans
+  Future<int> insertMealPlan(Map<String, dynamic> row) async {
+    final db = await instance.database;
+    return await db.insert('meal_plans', row);
+  }
+
+  Future<List<Map<String, dynamic>>> queryAllMealPlans() async {
+    final db = await instance.database;
+    return await db.query('meal_plans');
+  }
+
+  Future<int> updateMealPlan(Map<String, dynamic> row) async {
+    final db = await instance.database;
+    int id = row['id'];
+    return await db.update('meal_plans', row, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> deleteMealPlan(int id) async {
+    final db = await instance.database;
+    return await db.delete('meal_plans', where: 'id = ?', whereArgs: [id]);
   }
 
   Future close() async {
