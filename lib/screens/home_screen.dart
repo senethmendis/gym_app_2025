@@ -126,6 +126,50 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }).toList(),
                 ),
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            'Exersice Tutorials',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                CarouselSlider(
+                  options: CarouselOptions(height: 100.0),
+                  items: exersiceTutorials.map((i) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          margin: EdgeInsets.symmetric(horizontal: 5.0),
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 218, 255, 7),
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: NetworkImage(i.url),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+
+                          child: Column(children: []),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(
                     left: 8.0,
@@ -306,6 +350,43 @@ class _HomeScreenState extends State<HomeScreen> {
             // Meal Plans Tab
             Column(
               children: [
+                SizedBox(height: 20),
+                CarouselSlider(
+                  options: CarouselOptions(height: 200.0),
+                  items: healthyMeals.map((i) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          margin: EdgeInsets.symmetric(horizontal: 5.0),
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 218, 255, 7),
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: NetworkImage(i.url),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+
+                          child: Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Chip(
+                              backgroundColor: Color.fromARGB(255, 218, 255, 7),
+                              label: Text(
+                                '${i.title}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(
                     left: 8.0,
