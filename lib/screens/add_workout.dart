@@ -14,11 +14,23 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
   final List<TextEditingController> _exerciseControllers = [
     TextEditingController(),
   ];
+  final List<TextEditingController> _repsControllers = [
+    TextEditingController(),
+  ];
+  final List<TextEditingController> _setsControllers = [
+    TextEditingController(),
+  ];
 
   @override
   void dispose() {
     _titleController.dispose();
     for (var controller in _exerciseControllers) {
+      controller.dispose();
+    }
+    for (var controller in _repsControllers) {
+      controller.dispose();
+    }
+    for (var controller in _setsControllers) {
       controller.dispose();
     }
     super.dispose();
@@ -27,6 +39,8 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
   void _addExerciseField() {
     setState(() {
       _exerciseControllers.add(TextEditingController());
+      _repsControllers.add(TextEditingController());
+      _setsControllers.add(TextEditingController());
     });
   }
 
@@ -34,7 +48,11 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
     setState(() {
       if (_exerciseControllers.length > 1) {
         _exerciseControllers[index].dispose();
+        _repsControllers[index].dispose();
+        _setsControllers[index].dispose();
         _exerciseControllers.removeAt(index);
+        _repsControllers.removeAt(index);
+        _setsControllers.removeAt(index);
       }
     });
   }
@@ -42,28 +60,33 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final title = _titleController.text.trim();
-      final exercises = _exerciseControllers
-          .map((c) => c.text.trim())
-          .where((e) => e.isNotEmpty)
-          .toList();
-
-      // Save workout title
       final workoutId = await DatabaseHelper.instance.insertWorkout({
         'name': title,
         'date': DateTime.now().toIso8601String(),
       });
 
-      // Save exercises
-      for (final exercise in exercises) {
-        await DatabaseHelper.instance.database.then((db) {
-          db.insert('exercises', {'workout_id': workoutId, 'name': exercise});
-        });
+      int exerciseCount = 0;
+      for (int i = 0; i < _exerciseControllers.length; i++) {
+        final name = _exerciseControllers[i].text.trim();
+        final reps = _repsControllers[i].text.trim();
+        final sets = _setsControllers[i].text.trim();
+        if (name.isNotEmpty && reps.isNotEmpty && sets.isNotEmpty) {
+          exerciseCount++;
+          await DatabaseHelper.instance.database.then((db) {
+            db.insert('exercises', {
+              'workout_id': workoutId,
+              'name': name,
+              'reps': reps,
+              'sets': sets,
+            });
+          });
+        }
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Workout "$title" with ${exercises.length} exercises added!',
+            'Workout "$title" with $exerciseCount exercises added!',
           ),
         ),
       );
@@ -109,26 +132,77 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
               ),
               ..._exerciseControllers.asMap().entries.map((entry) {
                 int idx = entry.key;
-                return Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: entry.value,
-                        decoration: InputDecoration(
-                          labelText: 'Exercise ${idx + 1}',
-                          border: const OutlineInputBorder(),
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: entry.value,
+                                decoration: InputDecoration(
+                                  labelText: 'Exercise ${idx + 1}',
+                                  border: const OutlineInputBorder(),
+                                ),
+                                validator: (value) =>
+                                    value == null || value.trim().isEmpty
+                                    ? 'Enter exercise name'
+                                    : null,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.remove_circle,
+                                color: Colors.red,
+                              ),
+                              onPressed: () => _removeExerciseField(idx),
+                            ),
+                          ],
                         ),
-                        validator: (value) =>
-                            value == null || value.trim().isEmpty
-                            ? 'Enter exercise name'
-                            : null,
-                      ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _repsControllers[idx],
+                                decoration: const InputDecoration(
+                                  labelText: 'Reps',
+                                  border: OutlineInputBorder(),
+                                ),
+                                keyboardType: TextInputType.number,
+                                validator: (value) =>
+                                    value == null || value.trim().isEmpty
+                                    ? 'Enter reps'
+                                    : null,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _setsControllers[idx],
+                                decoration: const InputDecoration(
+                                  labelText: 'Sets',
+                                  border: OutlineInputBorder(),
+                                ),
+                                keyboardType: TextInputType.number,
+                                validator: (value) =>
+                                    value == null || value.trim().isEmpty
+                                    ? 'Enter sets'
+                                    : null,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.remove_circle, color: Colors.red),
-                      onPressed: () => _removeExerciseField(idx),
-                    ),
-                  ],
+                  ),
                 );
               }),
               TextButton.icon(
@@ -139,8 +213,20 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
               const SizedBox(height: 24),
               OutlinedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
+                  backgroundColor: WidgetStateProperty.all(
                     Color.fromARGB(255, 36, 36, 36),
+                  ),
+                  foregroundColor: WidgetStateProperty.all(Colors.white),
+                  padding: WidgetStateProperty.all(
+                    const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  textStyle: WidgetStateProperty.all(
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
                 onPressed: _submitForm,
