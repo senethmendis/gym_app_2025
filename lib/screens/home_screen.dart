@@ -170,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   BlendMode.darken,
                                 ),
                                 opacity: 0.5,
-                                image: AssetImage(i.url),
+                                image: NetworkImage(i.url),
                                 fit: BoxFit.cover,
                               ),
                             ),

@@ -42,27 +42,32 @@ const List<HeroImage> heroImages = [
 
 const List<HeroImage> healthyMeals = [
   HeroImage(
-    url: 'assets/images/5.jpg',
+    url:
+        'https://images.unsplash.com/photo-1627955280978-f54fff2f316a?q=80&w=736&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     title: 'Protein Breakfast',
     description: 'Eggs, avocado, and whole grain toast for a healthy start.',
   ),
   HeroImage(
-    url: 'assets/images/5.jpg',
+    url:
+        'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=710&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     title: 'Fresh Salad Lunch',
     description: 'Mixed greens, grilled chicken, and vinaigrette dressing.',
   ),
   HeroImage(
-    url: 'assets/images/5.jpg',
+    url:
+        'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     title: 'Vegetarian Dinner',
     description: 'Grilled vegetables and quinoa for a light evening meal.',
   ),
   HeroImage(
-    url: 'assets/images/5.jpg',
+    url:
+        'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     title: 'Fruit Snack',
     description: 'A bowl of fresh seasonal fruits for a healthy snack.',
   ),
   HeroImage(
-    url: 'assets/images/5.jpg',
+    url:
+        'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     title: 'Hydration',
     description: 'Refreshing infused water with lemon and mint.',
   ),
